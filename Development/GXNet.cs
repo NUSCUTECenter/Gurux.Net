@@ -94,6 +94,10 @@ namespace Gurux.Net
         /// Sync object.
         /// </summary>
         private object sync = new object();
+        /// <summary>
+        /// TCP backlog when using server constructor; default value is 4.
+        /// </summary>
+        private int backlog = 4;
 
         /// <summary>
         /// Signaling object used to notify when an asynchronous operation is completed
@@ -129,12 +133,14 @@ namespace Gurux.Net
         /// </summary>
         /// <param name="protocol">Used protocol.</param>
         /// <param name="listeningPort">Server listening port.</param>
-        public GXNet(NetworkType protocol, int listeningPort)
+        /// <param name="backlog"></param>
+        public GXNet(NetworkType protocol, int listeningPort, int backlog = 4)
         : this()
         {
             isServer = true;
             communicationProtocol = protocol;
             port = listeningPort;
+            this.backlog = backlog;
         }
 
         /// <summary>
@@ -919,7 +925,7 @@ namespace Gurux.Net
                     // Bind to local IP Address...
                     (socket as Socket).Bind(ipLocal);
                     // Start listening...
-                    (socket as Socket).Listen(4);
+                    (socket as Socket).Listen(backlog);
                     // Create the call back for any client connections...
                     (socket as Socket).BeginAccept(new AsyncCallback(OnClientConnect), null);
                 }
